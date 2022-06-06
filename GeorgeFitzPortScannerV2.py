@@ -35,12 +35,14 @@ def printAndWriteFile(fileToUse, stringToOutput):
 
 
 def checkHostPing(IP):
-    status = subprocess.getstatusoutput("ping -c 1 " + IP)
-    result = str(status)
-    if result.startswith("(0"):
-        return True
-    else:
+    # Determine system type - Windows needs ping -n and mac/linux need ping -n
+    try:
+        output = subprocess.check_output(
+            "ping -{} 1 {}".format('n' if platform.system().lower() == "windows" else 'c', IP), shell=True)
+    except Exception as e:
         return False
+
+    return True
 
 
 #
